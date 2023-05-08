@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <algorithm>
 #include <ctime>
 using namespace std;
@@ -21,6 +21,7 @@ public:
 	}
 
 	MyArrayParent(const MyArrayParent& obj) {
+		cout << "\nMyArray copy constructor";
 		this->capacity = obj.capacity;
 		this->count = obj.count;
 		this->ptr = new double[sizeof(obj.ptr)];
@@ -117,17 +118,6 @@ public:
 			this->ptr[i] = obj.ptr[i];
 		}
 		return *this;
-	}
-
-	//добавил создание копии объекта - в основном, при возвращении результата из функции / передаче параметров в функцию
-	void MyArray(const MyArrayParent& V) {
-		cout << "\nCopy constructor";
-		count = V.count;
-		capacity = V.capacity;
-		ptr = new double[capacity];
-		for (int i = 0; i < count; i++) {
-			ptr[i] = V.ptr[i];
-		}
 	}
 
 	void print() {
