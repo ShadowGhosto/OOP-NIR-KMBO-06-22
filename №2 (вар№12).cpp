@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <algorithm>
 #include <ctime>
 using namespace std;
@@ -214,26 +214,23 @@ protected:
 		}
 	}
 
-	int binary_search(MyArrayParent arr2, int ar) {
-		int left = 0;
-		int right = count - 1;
-
+	int binary_search_iterative(double value, int left, int right) {
 		while (left <= right) {
 			int mid = left + (right - left) / 2;
 
-			if (arr2.GetComponent(mid) == ar) {
+			if (ptr[mid] == value) {
 				return mid;
 			}
-			else if (arr2.GetComponent(mid) < ar) {
+			else if (ptr[mid] < value) {
 				left = mid + 1;
 			}
 			else {
 				right = mid - 1;
 			}
 		}
-
-		return -1; // если элемент не найден
+		return -1;
 	}
+
 public:
 
 	MySortedArray(int Dimension = 100) : MyArrayChild(Dimension) { cout << "\nMySortedArray constructor"; }
@@ -275,7 +272,7 @@ public:
 	}
 
 	int IndexOf(double value, bool bFindFromStart = true) {
-		int bs = (binary_search(value, 0, count - 1));
+		int bs = (binary_search_iterative(value, 0, count - 1));
 		if (count > 1 && (ptr[bs] == value)) {
 			return bs;
 		}
@@ -346,7 +343,7 @@ int main() {
 
 		/*cout << "\n";
 		arr3.print();
-		int index = arr3.binary_search(arr3, 5);
+		int index = arr3.Binary_search(arr3, 5);
 		cout << "\nResult of binary_search: " << index << endl;*/
 
 		cout << "\n";
