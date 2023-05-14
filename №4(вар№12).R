@@ -118,11 +118,11 @@ rf_grid$fit(X_train_dummy, y_train)
 #Вывод лучших значений для шага 50 в параметре n_estimators 
 print(rf_grid$best_params_)
 #Прогноз на основе данных тестирования с помощью случайного дерева с шагом 50 в параметре n_estimators
-rf_best <- ensemble$RandomForestClassifier(n_estimators=rf_grid$best_params_[['n_estimators']], 
-                                           max_depth=rf_grid$best_params_[['max_depth']],
-                                           min_samples_split=rf_grid$best_params_[['min_samples_split']],
-                                           min_samples_leaf=rf_grid$best_params_[['min_samples_leaf']],
-                                           max_features=rf_grid$best_params_[['max_features']],
+rf_best <- ensemble$RandomForestClassifier(n_estimators=150L, 
+                                           max_depth=9L,
+                                           min_samples_split=20L,
+                                           min_samples_leaf=2L,
+                                           max_features="sqrt",
                                            random_state=123L)
 rf_best$fit(X_train_dummy, y_train)
 
@@ -146,11 +146,11 @@ rf_grid$fit(X_train_dummy, y_train)
 #Вывод лучших значений для шага 10 в параметре n_estimators
 print(rf_grid$best_params_)
 #Прогноз на основе данных тестирования с помощью случайного дерева с шагом 10 в параметре n_estimators
-rf_best <- ensemble$RandomForestClassifier(n_estimators=rf_grid$best_params_[['n_estimators']], 
-                                           max_depth=rf_grid$best_params_[['max_depth']],
-                                           min_samples_split=rf_grid$best_params_[['min_samples_split']],
-                                           min_samples_leaf=rf_grid$best_params_[['min_samples_leaf']],
-                                           max_features=rf_grid$best_params_[['max_features']],
+rf_best <- ensemble$RandomForestClassifier(n_estimators=80L, 
+                                           max_depth=9L,
+                                           min_samples_split=2L,
+                                           min_samples_leaf=1L,
+                                           max_features="sqrt",
                                            random_state=123L)
 rf_best$fit(X_train_dummy, y_train)
 
