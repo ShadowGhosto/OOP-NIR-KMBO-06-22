@@ -45,9 +45,9 @@ y_pred <- logreg$predict(X_test_dummy)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод линейной регрессии
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))
-print(F1 <- 2 * precision * recall / (precision + recall))
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.5148515
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3421053
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.4110672
 
 
 #Пример использования Random Forest
@@ -57,9 +57,9 @@ y_pred <- rf$predict(X_test_dummy)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод случайный лес
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))
-print(F1 <- 2 * precision * recall / (precision + recall))
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.4356436
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3697479
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.4
 
 #Различные комбинации гиперпараметров для случайного дерева с шагом 50 в параметре n_estimators
 param_grid <- list(n_estimators = c(50L, 100L, 150L, 200L, 250L))
@@ -76,9 +76,9 @@ y_pred <- rf_best$predict(X_test_dummy)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод случайный лес с шагом 50 
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))
-print(F1 <- 2 * precision * recall / (precision + recall))
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.4356436
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3697479
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.4
 
 #Различные комбинации гиперпараметров для случайного дерева с шагом 10 в параметре n_estimators
 param_grid <- list(n_estimators = c(10L, 20L, 30L, 40L, 50L, 60L, 70L, 80L, 90L))
@@ -95,9 +95,9 @@ y_pred <- rf_best$predict(X_test_dummy)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод случайный лес с шагом 10
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))
-print(F1 <- 2 * precision * recall / (precision + recall))
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.4455446
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3571429
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.3964758
 #Недостаточном количеством данных для обучения модели, особенно если в данных присутствует много шума и несбалансированных классов.
 #Неправильным выбором гиперпараметров модели, таких как количество деревьев и их глубина.
 
@@ -129,9 +129,9 @@ y_pred <- rf_best$predict(X_test_dummy)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод случайный лес с шагом 50 
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))
-print(F1 <- 2 * precision * recall / (precision + recall))
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.4950495
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3546099
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.4132231
 
 #Различные комбинации гиперпараметров для случайного дерева с шагом 10 в параметре n_estimators
 param_grid <- list(n_estimators = c(10L, 20L, 30L, 40L, 50L, 60L, 70L, 80L),
@@ -157,9 +157,9 @@ y_pred <- rf_best$predict(X_test_dummy)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод случайный лес с шагом 10
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))
-print(F1 <- 2 * precision * recall / (precision + recall))
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.4455446
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3571429
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.3964758
 ## Добавление новых параметров не привело к улучшениям моделей
 
 ###Вывод: Основываясь на данных исследования Students performance in exams можно сделать вывод о том, 
