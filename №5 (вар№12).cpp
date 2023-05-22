@@ -28,12 +28,8 @@ class InvalidSizeException : public Exception {
 protected:
 	int rows, cols;
 public:
-	InvalidSizeException(const char* s, int Rows, int Cols) : Exception(s) {
-		rows = Rows; cols = Cols;
-	}
-	InvalidSizeException(const InvalidSizeException& e) : Exception(e) {
-		rows = e.rows; cols = e.cols;
-	}
+	InvalidSizeException(const char* s, int Rows, int Cols) : Exception(s) { rows = Rows; cols = Cols; }
+	InvalidSizeException(const InvalidSizeException& e) : Exception(e) { rows = e.rows; cols = e.cols; }
 	virtual void print() { cout << "InvalidSizeException: " << str << "; rows = " << rows << "; columns = " << cols << "; " << what(); }
 };
 
@@ -41,12 +37,8 @@ class IndexOutOfBoundsException : public Exception {
 protected:
 	int row, col;
 public:
-	IndexOutOfBoundsException(const char* s, int Row, int Col) : Exception(s) {
-		row = Row; col = Col;
-	}
-	IndexOutOfBoundsException(const IndexOutOfBoundsException& e) : Exception(e) {
-		row = e.row; col = e.col;
-	}
+	IndexOutOfBoundsException(const char* s, int Row, int Col) : Exception(s) { row = Row; col = Col; }
+	IndexOutOfBoundsException(const IndexOutOfBoundsException& e) : Exception(e) { row = e.row; col = e.col; }
 	virtual void print() { cout << "IndexOutOfBoundsException: " << str << "; row = " << row << "; column = " << col << "; " << what(); }
 };
 
@@ -54,12 +46,8 @@ class WrongSizeException : public Exception {
 protected:
 	int rows, cols;
 public:
-	WrongSizeException(const char* s, int Rows, int Cols) : Exception(s) {
-		rows = Rows; cols = Cols;
-	}
-	WrongSizeException(const WrongSizeException& e) : Exception(e) {
-		rows = e.rows; cols = e.cols;
-	}
+	WrongSizeException(const char* s, int Rows, int Cols) : Exception(s) { rows = Rows; cols = Cols; }
+	WrongSizeException(const WrongSizeException& e) : Exception(e) { rows = e.rows; cols = e.cols; }
 	virtual void print() { cout << "WrongSizeException: " << str << "; rows = " << rows << "; columns = " << cols << "; " << what(); }
 };
 
@@ -77,6 +65,14 @@ public:
 	virtual void print() { cout << "TooLargeSizeException: " << str << "; rows = " << rows << "; columns = " << cols << "; " << what(); }
 };
 
+class GaussianEliminationException : public Exception {
+public:
+	GaussianEliminationException(const char* s) : Exception(s) {}
+	GaussianEliminationException(const GaussianEliminationException& e) : Exception(e) {}
+	virtual void print() { cout << "GaussianEliminationException: " << str << "; " << what(); }
+};
+
+
 template<class T>
 class BaseMatrix {
 protected:
@@ -86,7 +82,6 @@ protected:
 public:
 
 BaseMatrix(int Height = 2, int Width = 2) {
-	//конструктор
 	if (Height <= 0 || Width <= 0) { throw NonPositiveSizeException("Non-positive size of matrix in BaseMatrix constructor", Height, Width); }
 	if (Height >= 50 || Width >= 50) { throw NonPositiveSizeException("Too large size of matrix in BaseMatrix constructor", Height, Width); }
 	cout << "\nBaseMatrix constructor int, int";
@@ -96,6 +91,15 @@ BaseMatrix(int Height = 2, int Width = 2) {
 	for (int i = 0; i < height; i++) {
 		ptr[i] = new T[width];
 	}
+}
+
+BaseMatrix<typename T> operator=(BaseMatrix A) {
+	for (int i = 0; i < A.height; i++) {
+		for (int j = 0; j < A.width; j++) {
+			ptr[i][j] = A[i][j];
+		}
+	}
+	return *this;
 }
 
 BaseMatrix(T** arr, int w, int h) {
@@ -115,54 +119,50 @@ BaseMatrix(T** arr, int w, int h) {
 	}
 }
 
-BaseMatrix<typename T> operator=(BaseMatrix A) {
-	for (int i = 0; i < A.height; i++) {
-		for (int j = 0; j < A.width; j++) {
-			ptr[i][j] = A[i][j];
-		}
-	}
-}
 
 
-void GaussianElimination(T** A, int m, int n) {
+BaseMatrix<T> GaussianElimination() {
 	int i = 0, j = 0, k = 0;
-	T t = 0;
+	T t;
 
-	for (i = 0; i < m; i++) {
-		if (A[i][j] == 0) {
-			// Поиск первого ненулевого элемента в столбце
-			for (k = i + 1; k < m; k++) {
-				if (A[k][j] != 0) {
-					// Меняем местами строки
-					for (int l = 0; l < n; l++) {
-						t = A[i][l];
-						A[i][l] = A[k][l];
-						A[k][l] = t;
+	for (i = 0; i < height; i++) {
+		if (ptr[i][j] == 0) {
+			// Найдите первый ненулевой элемент в столбце
+			for (k = i + 1; k < height; k++) {
+				if (ptr[k][j] != 0) {
+					// Поменять местами строки
+					for (int l = 0; l < width; l++) {
+						t = ptr[i][l];
+						ptr[i][l] = ptr[k][l];
+						ptr[k][l] = t;
 					}
 					break;
 				}
 			}
-			// Если не нашли ненулевой элемент, переходим к следующему столбцу
-			if (k == m) {
+			//Если ненулевой элемент не найден, перейдем к следующему столбцу
+			if (k == height) {
 				j++;
+				if (j >= width) { throw GaussianEliminationException("Matrix is singular"); }
 				continue;
 			}
 		}
-		// Деление первой строки на главный элемент
-		t = A[i][j];
-		for (int l = j; l < n; l++) {
-			A[i][l] /= t;
+		// Разделим первую строку на ведущий элемент
+		t = ptr[i][j];
+		for (int l = j; l < width; l++) {
+			ptr[i][l] /= t;
 		}
-		// Вычитание первой строки из всех нижних строк
-		for (k = i + 1; k < m; k++) {
-			t = A[k][j];
-			for (int l = j; l < n; l++) {
-				A[k][l] -= t * A[i][l];
+		// Вычтитание первой строки из всех нижних строк
+		for (k = i + 1; k < height; k++) {
+			t = ptr[k][j];
+			for (int l = j; l < width; l++) {
+				ptr[k][l] -= t * ptr[i][l];
 			}
 		}
 		j++;
 	}
+	return *this;
 }
+
 
 virtual ~BaseMatrix() {
 	//деструктор
@@ -279,6 +279,8 @@ istream& operator>>(istream& s, BaseMatrix<T>& M) {
 	return s;
 }
 
+
+
 int main() {
 
 	try {
@@ -292,14 +294,21 @@ int main() {
 			arr[i](1, 1) = i + 3;
 		}
 
-		Matrix<int> matrix(4, 4);
+		Matrix<int> matrix(3, 3);
 		matrix.RandomFill();
 		cout << "\nRandomFill\n" << matrix;
 
-		matrix.GaussianElimination(matrix.ptr, matrix.height, matrix.width);
+		matrix.GaussianElimination();
 		cout << "\nGaussianElimination\n" << matrix;
 
-        ofstream fout("test.txt");
+		Matrix<int> matrix1(4, 4);
+		matrix1.RandomFill();
+		cout << "\nRandomFill1\n" << matrix1;
+
+		matrix1.GaussianElimination();
+		cout << "\nGaussianElimination1\n" << matrix1;
+
+        ofstream fout("test1.txt");
         if (fout) {
             //fout << M;
             //fout << "10\n";
@@ -349,7 +358,10 @@ int main() {
 	{
 		cout << "\nCaught exception: "; cout << e.what();
 	}
-
+	catch (GaussianEliminationException e)
+	{
+		cout << "\nCaught GaussianEliminationException: "; cout << e.what();
+	}
 
 	char c; cin >> c;
 	return 0;
