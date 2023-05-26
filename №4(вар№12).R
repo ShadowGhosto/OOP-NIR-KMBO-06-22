@@ -105,7 +105,7 @@ print(F1 <- 2 * precision * recall / (precision + recall))# 0.3964758
 
 
 
-##### Можно попытаться увеличить точность модели с помощью добавление других гиперпараметров:
+##### Можно попытаться увеличить точность модели с помощью добавление других гиперпараметров и анализа важности признаков:
 param_grid <- list(n_estimators = c(50L, 100L, 150L, 200L, 250L),
                    max_depth = c(3L, 5L, 7L, 9L, 11L),
                    min_samples_split = c(2L, 5L, 10L, 15L, 20L),
@@ -125,13 +125,26 @@ rf_best <- ensemble$RandomForestClassifier(n_estimators=150L,
                                            random_state=123L)
 rf_best$fit(X_train_dummy, y_train)
 
-y_pred <- rf_best$predict(X_test_dummy)
+importance <- rf_best$feature_importances_
+
+sorted_indices <- order(importance, decreasing = TRUE)
+
+
+top_features <- sorted_indices[1:4]
+X_train_top <- X_train_dummy[, top_features]
+X_test_top <- X_test_dummy[, top_features]
+
+rf_top <- ensemble$RandomForestClassifier(n_estimators = 150L, max_depth = 9L, min_samples_split = 20L, min_samples_leaf = 2L, max_features = "sqrt", random_state = 123L)
+rf_top$fit(X_train_top, y_train)
+
+
+y_pred <- rf_top$predict(X_test_top)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод случайный лес с шагом 50 
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.4950495
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3546099
-print(F1 <- 2 * precision * recall / (precision + recall))# 0.4132231
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.9306931
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3574144
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.5164835
 
 #Различные комбинации гиперпараметров для случайного дерева с шагом 10 в параметре n_estimators
 param_grid <- list(n_estimators = c(10L, 20L, 30L, 40L, 50L, 60L, 70L, 80L),
@@ -153,14 +166,27 @@ rf_best <- ensemble$RandomForestClassifier(n_estimators=80L,
                                            random_state=123L)
 rf_best$fit(X_train_dummy, y_train)
 
-y_pred <- rf_best$predict(X_test_dummy)
+importance <- rf_best$feature_importances_
+
+sorted_indices <- order(importance, decreasing = TRUE)
+
+
+top_features <- sorted_indices[1:4]
+X_train_top <- X_train_dummy[, top_features]
+X_test_top <- X_test_dummy[, top_features]
+
+rf_top <- ensemble$RandomForestClassifier(n_estimators = 80L, max_depth = 9L, min_samples_split = 2L, min_samples_leaf = 1L, max_features = "sqrt", random_state = 123L)
+rf_top$fit(X_train_top, y_train)
+
+
+y_pred <- rf_top$predict(X_test_top)
 y_pred <- factor(y_pred, levels = levels(y_test))
 #Точность, отзыв и оценку F1, используя метод случайный лес с шагом 10
 print(confusion_matrix <- confusionMatrix(y_pred, y_test)$table)
-print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.4455446
-print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3571429
-print(F1 <- 2 * precision * recall / (precision + recall))# 0.3964758
-## Добавление новых параметров не привело к улучшениям моделей
+print(precision <- confusion_matrix[3, 3] / sum(confusion_matrix[, 3]))# 0.8613861
+print(recall <- confusion_matrix[3, 3] / sum(confusion_matrix[3, ]))# 0.3411765
+print(F1 <- 2 * precision * recall / (precision + recall))# 0.488764
+## Добавление новых параметров привело к улучшениям моделей
 
 ###Вывод: Основываясь на данных исследования Students performance in exams можно сделать вывод о том, 
 #что лучшим типом классификатора является Random Forest так как имеет большую точность чем LogisticRegression 
