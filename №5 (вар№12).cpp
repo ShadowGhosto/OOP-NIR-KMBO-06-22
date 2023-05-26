@@ -269,7 +269,19 @@ template<class T>
 istream& operator>>(istream& s, BaseMatrix<T>& M) {
 	if (typeid(s) == typeid(ifstream)) {
 		int h, w; s >> h >> w;
-		if (M.height != h || M.width != w) { throw WrongSizeException("Matrices in file and in code have got different size", h, w); }
+		if (M.height != h || M.width != w) { throw WrongSizeException("Matrices in file and in code have got different size", h, w);
+			// Удаляем предыдущие данные
+			for (int i = 0; i < M.height; i++) {
+				delete[] M.ptr[i];
+			}
+			delete[] M.ptr;
+
+			// Выделяем новую память для матрицы
+			M.ptr = new T *[M.height];
+			for (int i = 0; i < M.height; i++) {
+				M.ptr[i] = new T[M.width];
+			}
+		}
 	}
 	for (int i = 0; i < M.height; i++) {
 		for (int j = 0; j < M.width; j++) {
@@ -294,21 +306,21 @@ int main() {
 			arr[i](1, 1) = i + 3;
 		}
 
-		Matrix<int> matrix(3, 3);
-		matrix.RandomFill();
-		cout << "\nRandomFill\n" << matrix;
-
-		matrix.GaussianElimination();
-		cout << "\nGaussianElimination\n" << matrix;
-
-		Matrix<int> matrix1(4, 4);
+		Matrix<int> matrix1(3, 3);
 		matrix1.RandomFill();
-		cout << "\nRandomFill1\n" << matrix1;
+		cout << "\nRandomFill\n" << matrix1;
 
 		matrix1.GaussianElimination();
-		cout << "\nGaussianElimination1\n" << matrix1;
+		cout << "\nGaussianElimination\n" << matrix1;
 
-        ofstream fout("test1.txt");
+		Matrix<int> matrix2(4, 4);
+		matrix2.RandomFill();
+		cout << "\nRandomFill1\n" << matrix2;
+
+		matrix2.GaussianElimination();
+		cout << "\nGaussianElimination1\n" << matrix2;
+
+        ofstream fout("test.txt");
         if (fout) {
             //fout << M;
             //fout << "10\n";
