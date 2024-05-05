@@ -1,0 +1,266 @@
+﻿#include <iostream>
+#include <queue>
+using namespace std;
+
+template <class T>
+class Node {
+private:
+    T value;
+
+public:
+    T getValue() { return value; }
+    void setValue(T v) { value = v; }
+
+    bool operator<(Node<T> N) {
+        return value < N.getValue();
+    }
+
+    bool operator>(Node<T> N) {
+        return value > N.getValue();
+    }
+    bool operator>(const Node<T>& other) const {
+        return value > other.getValue();
+    }
+    void print() {
+        cout << value;
+    }
+};
+class Book {
+public:
+    string authorLastName;
+    string authorFirstName;
+    string title;
+    int publicationYear;
+    string publisherName;
+    int pageCount;
+    enum EditionType { Electronic, Paper, Audio };
+    EditionType edition;
+    int tirage;
+
+    // Конструктор класса Book
+    Book(string lastName, string firstName, string bookTitle, int year, string publisher, int pages, EditionType ed, int copies) {
+        authorLastName = lastName;
+        authorFirstName = firstName;
+        title = bookTitle;
+        publicationYear = year;
+        publisherName = publisher;
+        pageCount = pages;
+        edition = ed;
+        tirage = copies;
+    }
+    Book() : authorLastName(""), authorFirstName(""), title(""), publicationYear(0),
+        publisherName(""), pageCount(0), edition(Electronic), tirage(0) {
+    }
+    bool operator<(const Book& other) const {
+
+        return this->tirage < other.tirage;
+    }
+    bool operator>(const Book& other) const {
+
+        return this->tirage > other.tirage;
+    }
+    bool operator<(int tirage) const {
+        return this->tirage < tirage;
+    }
+
+    bool operator==(int tirage) const {
+
+        return this->tirage == tirage;
+    }
+    bool operator>(int tirage) const {
+        return this->tirage > tirage;
+    }
+
+
+};
+ostream& operator<<(ostream& os, const Book& book) {
+    os << "Author: " << book.authorFirstName << " " << book.authorLastName << endl;
+    os << "Title: " << book.title << endl;
+    os << "Publication Year: " << book.publicationYear << endl;
+    os << "Publisher: " << book.publisherName << endl;
+    os << "Page Count: " << book.pageCount << endl;
+    os << "Edition: ";
+    switch (book.edition) {
+    case Book::Electronic:
+        os << "Electronic";
+        break;
+    case Book::Paper:
+        os << "Paper";
+        break;
+    case Book::Audio:
+        os << "Audio";
+        break;
+    }
+    os << endl;
+    os << "Tirage: " << book.tirage << endl;
+
+    return os;
+}
+
+template <class T>
+void print(Node<T>* N) {
+    cout << N->getValue() << "\n";
+};
+
+template <class T>
+class Heap {
+private:
+    Node<T>* arr;
+    int len;
+    int size;
+
+public:
+    int getCapacity() { return size; }
+    int getCount() { return len; }
+    Node<T>& operator[](int index) {
+        return arr[index];
+    }
+
+    Heap<T>(int MemorySize = 100) {
+        arr = new Node<T>[MemorySize];
+        len = 0;
+        size = MemorySize;
+    }
+
+    void Swap(int index1, int index2) {
+        Node<T> temp = arr[index1];
+        arr[index1] = arr[index2];
+        arr[index2] = temp;
+    }
+
+    void Copy(Node<T>* dest, Node<T>* source) {
+        dest->setValue(source->getValue());
+    }
+
+    Node<T>* GetLeftChild(int index) {
+        return &arr[index * 2 + 1];
+    }
+
+    Node<T>* GetRightChild(int index) {
+        return &arr[index * 2 + 2];
+    }
+
+    Node<T>* GetParent(int index) {
+        if (index % 2 == 0)
+            return &arr[index / 2 - 1];
+        return &arr[index / 2];
+    }
+
+    int GetLeftChildIndex(int index) {
+        return index * 2 + 1;
+    }
+
+    int GetRightChildIndex(int index) {
+        return index * 2 + 2;
+    }
+
+    int GetParentIndex(int index) {
+        if (index <= 0 || index >= len)
+            ;
+        if (index % 2 == 0)
+            return index / 2 - 1;
+        return index / 2;
+    }
+
+
+    void SiftUp(int index = -1) {
+
+        if (index == -1) index = len - 1;
+        int parent = GetParentIndex(index);
+        int index2 = GetLeftChildIndex(parent);
+        if (index2 == index) index2 = GetRightChildIndex(parent);
+        int max_index = index;
+        if (index < len && index2 < len && parent >= 0) {
+            if (arr[index] > arr[index2])
+                max_index = index;
+            if (arr[index] < arr[index2])
+                max_index = index2;
+        }
+        if (parent < len && parent >= 0 && arr[max_index] > arr[parent]) {
+            Swap(parent, max_index);
+            SiftUp(parent);
+        }
+    }
+
+    void Add(T v) {
+        Node<T>* N = new Node<T>;
+        N->setValue(v);
+        Add(N);
+    }
+
+    void Add(Node<T>* N) {
+        if (len < size) {
+            Copy(&arr[len], N);
+            len++;
+            SiftUp();
+        }
+    }
+
+    void ExtractMax() {
+        if (len == 0) return; // Heap is empty
+        Swap(0, len - 1);
+        len--;
+        SiftUp(0);
+    }
+
+    void Remove(int index) {
+        if (index < 0 || index >= len) return;
+        Swap(index, len - 1);
+        len--;
+        SiftUp(index);
+    }
+
+    void Straight(void (*f)(Node<T>*)) {
+        int i;
+        for (i = 0; i < len; i++) {
+            f(&arr[i]);
+        }
+    }
+
+    void InOrder(void (*f)(Node<T>*), int index = 0) {
+        if (GetLeftChildIndex(index) < len)
+            InOrder(f, GetLeftChildIndex(index));
+        if (index >= 0 && index < len)
+            f(&arr[index]);
+        if (GetRightChildIndex(index) < len)
+            InOrder(f, GetRightChildIndex(index));
+    }
+
+};
+
+
+struct BookComparator {
+    bool operator()(const Book& b1, const Book& b2) const {
+        return b1.tirage < b2.tirage;
+    }
+};
+
+int main() {
+
+    priority_queue<Book, vector<Book>, BookComparator> PriorityQueue;
+
+    Heap<Book> Tree;
+    Book book1("Doe", "John", "Introduction to C++", 2020, "Publisher A", 300, Book::Paper, 1000);
+    Book book2("Smith", "Jane", "Data Structures", 2019, "Publisher B", 400, Book::Electronic, 1500);
+    Book book3("Brown", "Alice", "Algorithms", 2022, "Publisher C", 350, Book::Paper, 1200);
+    Tree.Add(book1);
+    Tree.Add(book2);
+    Tree.Add(book3);
+    PriorityQueue.push(book1);
+    PriorityQueue.push(book2);
+    PriorityQueue.push(book3);
+    
+        cout << "Original Heap (Straight):\n";
+    void (*f_ptr)(Node<Book>*);
+    f_ptr = print;
+
+
+
+    cout << "\nExtracting Max (In reverse order):\n";
+    while (Tree.getCount() > 0) {
+        cout << "Max: " << Tree[0].getValue() << endl;
+        Tree.ExtractMax();
+    }
+
+    return 0;
+}
